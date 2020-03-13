@@ -18,7 +18,7 @@ class QueryBuilder:
 
     @staticmethod
     def get_mysql_metadata_query(db_name, table_name):
-        query = "select COLUMN_NAME, DATA_TYPE from information_schema.columns where table_schema = '{0}' and table_name = '{1}' order by ORDINAL_POSITION".format(db_name, table_name)
+        query = "select COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH from information_schema.columns where table_schema = '{0}' and table_name = '{1}' order by ORDINAL_POSITION".format(db_name, table_name)
         return query
 
     @staticmethod

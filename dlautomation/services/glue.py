@@ -57,6 +57,6 @@ class Glue:
             print(ce)
 
     @staticmethod
-    def get_table_metadata(db_name, table_name):
+    def get_table_info(db_name, table_name):
         metadata = glue_client.get_table(DatabaseName=db_name, Name=table_name)
         return metadata

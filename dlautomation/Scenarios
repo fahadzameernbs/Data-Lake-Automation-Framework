@@ -1,0 +1,8 @@
+Comparisons on all the active tables
+
+1- Simple count comparison  \/
+2- Meta data comparison with following points
+    *) With data types mapping
+    *) With excluded columns  \/
+    *) Without columns mapping
+    *) With columns mapping

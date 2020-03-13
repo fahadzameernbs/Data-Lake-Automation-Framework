@@ -27,7 +27,7 @@ class CountComparison:
             target_count = CountComparison.get_mysql_table_count(target_schema, target_table)
         elif params["target_endpoint"] == "athena":
             target_count = CountComparison.get_athena_table_count(target_schema, target_table)
-        return source_count, target_count
+        return source_table, source_count, target_table, target_count
 
     @staticmethod
     def get_mysql_table_count(schema_name, table_name):
@@ -45,19 +45,21 @@ class CountComparison:
 
     @staticmethod
     def compare_counts():
-        test_status_flag = True
-        mismatch_counts = []
+        mismatch_counts_list = []
         active_tables = QueryResult.get_active_tables()
         #getting active tables
         for row in active_tables:
+            test_status = "Pass"
             #getting endpoints selection and counts
-            source_count, target_count= CountComparison.endpoints_count(row)
+            source_table, source_count, target_table, target_count = CountComparison.endpoints_count(row)
             if source_count != target_count:
-                test_status_flag = False
-                mismatch_count_dic = {}
-                mismatch_count_dic["table_name"] = table_name
-                mismatch_count_dic["source_count"] = source_count
-                mismatch_count_dic["target_count"] = target_count
-                mismatch_counts.append(mismatch_count_dic)
-        return test_status_flag, mismatch_counts
+                test_status = "Fail"
+            mismatch_count_dic = {}
+            mismatch_count_dic["test_status"] = test_status
+            mismatch_count_dic["source_table"] = source_table
+            mismatch_count_dic["source_count"] = source_count
+            mismatch_count_dic["target_table"] = target_table
+            mismatch_count_dic["target_count"] = target_count
+            mismatch_counts_list.append(mismatch_count_dic)
+        return mismatch_counts_list
 
