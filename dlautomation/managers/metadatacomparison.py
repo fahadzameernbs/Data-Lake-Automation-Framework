@@ -50,7 +50,7 @@ class MetaDataComparison:
                                                                                                 target_table,
                                                                                                 target_columns,
                                                                                                 target_excluded_columns)
-        return follow_columns_mapping, filtered_source_columns, filtered_target_columns
+        return follow_columns_mapping, source_table, filtered_source_columns, target_table, filtered_target_columns
 
     @staticmethod
     def get_mysql_table_metadata(schema_name, table_name):
@@ -155,12 +155,12 @@ class MetaDataComparison:
         Description: to compare the meta data of source table and target table by invoking different methods
                      (get_active_tables, get_dt_mapping, endpoints_metadata, get_columns_mapping)
         parameters:  none
-        Return:      columns_mapping (particular table columns mapping)
+        Return:      table_meta_data_results (final test case results includes test_status, source_table,
+                     source table column names, source table data types, target_table, target table columns,
+                     target table data types)
         Exceptions:
         """
-        test_case_status = "pass"
         table_meta_data_results = []
-        mismatch_datatypes = []
         #getting all the active tables
         active_tables = QueryResult.get_active_tables()
         #getting data types mapping across different data bases
@@ -170,13 +170,15 @@ class MetaDataComparison:
             metadata_dic = {}
             column_names = []
             data_types = []
-            column_names_test_status = "pass"
-            column_data_types_test_status = "pass"
+            column_names_test_status = "Pass"
+            data_types_test_status = "Pass"
             #getting endpoints selection and metadata
-            follow_columns_mapping, source_columns, target_columns = MetaDataComparison.endpoints_metadata(row)
+            follow_columns_mapping, source_table, source_columns, target_table, target_columns = MetaDataComparison.\
+                                                                                                endpoints_metadata(row)
             #getting columns from source and target tables
             for index in range(len(source_columns)):
-                column_name
+                column_names_dic = {}
+                data_types_dic = {}
                 source_column_name = source_columns[index]["Name"]          #fetching source column name
                 source_column_dt = source_columns[index]["Type"]            #fetching source column data type
                 target_column_name = target_columns[index]["Name"]          #fetching target column name
@@ -189,27 +191,31 @@ class MetaDataComparison:
                     mapping_target_column_name = columns_mapping.get(source_column_name)
                     #check if column name mismatch found (if follow columns mapping flag is yes)
                     if mapping_target_column_name != target_column_name:
-                        test_status_flag = False
-                        mismatch_metadata = {}
-                        mismatch_metadata["source_column"] = mapping_target_column_name
-                        mismatch_metadata["target_column"] = target_column_name
-                        mismatch_cols.append(mismatch_metadata)
+                        column_names_test_status = "Fail"
+                    column_names_dic["source_column_name"] = mapping_target_column_name
+                    column_names_dic["target_column_name"] = target_column_name
+                    column_names.append(column_names_dic)
                 else:
                     #check if column name mismatch found (if follow columns mapping flag is no)
                     if source_column_name != target_column_name:
-                        test_status_flag = False
-                        mismatch_metadata = {}
-                        mismatch_metadata["source_column"] = source_column_name
-                        mismatch_metadata["target_column"] = target_column_name
-                        mismatch_cols.append(mismatch_metadata)
+                        column_names_test_status = "Fail"
+                    column_names_dic["source_column_name"] = source_column_name
+                    column_names_dic["target_column_name"] = target_column_name
+                    column_names.append(column_names_dic)
                 #check if column data type mismatch found
                 expected_dt = datatype_mapping.get(source_column_dt)
                 if target_column_dt != expected_dt:
-                    test_status_flag = False
-                    mismatch_metadata = {}
-                    mismatch_metadata["source_column"] = source_column_name
-                    mismatch_metadata["target_column"]= target_column_name
-                    mismatch_metadata["actual_datatype"] = target_column_dt
-                    mismatch_metadata["expected_datatype"] = expected_dt
-                    mismatch_datatypes.append(mismatch_metadata)
-        return test_status_flag, mismatch_cols, mismatch_datatypes
+                    data_types_test_status = "Fail"
+                data_types_dic["source_column_name"] = source_column_name
+                data_types_dic["target_column_name"]= target_column_name
+                data_types_dic["target_datatype"] = target_column_dt
+                data_types_dic["expected_datatype"] = expected_dt
+                data_types.append(data_types_dic)
+            metadata_dic["source_table_name"] = source_table
+            metadata_dic["target_table_name"] = target_table
+            metadata_dic["column_names_test_status"] = column_names_test_status
+            metadata_dic["data_types_test_status"] = data_types_test_status
+            metadata_dic["column_names"] = column_names
+            metadata_dic["data_types"] = data_types
+            table_meta_data_results.append(metadata_dic)
+        return table_meta_data_results

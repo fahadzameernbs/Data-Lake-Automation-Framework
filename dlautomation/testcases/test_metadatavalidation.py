@@ -2,29 +2,22 @@ from managers.metadatacomparison import MetaDataComparison
 
 
 def test_metadatavalidation():
-    test_status, mismatch_cols, mismatch_datatypes = MetaDataComparison.compare_metadata()
-    print(test_status)
-    if mismatch_cols:
-        print("\nColumn Names Mismatches Found")
-        table_name = None
-        for mismatch_col in mismatch_cols:
-            """
-            if table_name is None or table_name != mismatch_col["table_name"]:
-                table_name = mismatch_col["table_name"]
-                print("\n--------------------------------------"+mismatch_col["table_name"]+"--------------------------------------\n")
-            """
-            print(mismatch_col["source_column"]+"   |   "+mismatch_col["target_column"])
-    if mismatch_datatypes:
-        a = mismatch_datatypes
-        print("\nColumns Datatypes Mismatches Found")
-        table_name = None
-        for mismatch_datatype in mismatch_datatypes:
-            """
-            if table_name is None or table_name != mismatch_datatype["table_name"]:
-                table_name = mismatch_datatype["table_name"]
-                print("\n--------------------------------------"+mismatch_datatype["table_name"]+"--------------------------------------\n")
-            """
-            print(mismatch_datatype["source_column"]+"  |  "+mismatch_datatype["actual_datatype"]+"   |    "+mismatch_datatype["target_column"]+"   |    "+mismatch_datatype["expected_datatype"])
+    table_meta_data_results = MetaDataComparison.compare_metadata()
+    for result in table_meta_data_results:
+        print("\n---------------------------------------------------------------------------------------------------------------------\n")
+        print("%20s%15s%30s%20s%15s"%("Source Table Name:",result["source_table_name"],"","Target Table Name:",result["target_table_name"]))
+        print("\n")
+        print("%35s%30s%20s%15s"%("Column Names Comparison","","Test Status",result["column_names_test_status"]))
+        print("\n")
+        print("%20s%20s%20s"%("Source Column Name","","Target Column Name"))
+        for column in result["column_names"]:
+            print("%20s%20s%20s"%(column["source_column_name"],"",column["target_column_name"]))
+        print("\n")
+        print("%35s%30s%20s%15s"%("Data Types Comparison","","Test Status",result["data_types_test_status"]))
+        print("\n")
+        print("%20s%20s%20s%20s%20s%20s%20s"%("Source Column Name","","Source Column Data Type","","Target Column Name","","Target Column Data Types"))
+#        for column in result["column_names"]:
+#            print("%20s%20s%20s"%(column["source_column_name"],"",column["target_column_name"]))
 
 
 
