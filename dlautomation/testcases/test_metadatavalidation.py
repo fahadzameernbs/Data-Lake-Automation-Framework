@@ -1,4 +1,4 @@
-from manager.metadatacomparison import MetaDataComparison
+from managers.metadatacomparison import MetaDataComparison
 
 
 def test_metadatavalidation():
