@@ -93,9 +93,9 @@ class CountComparison:
                 test_status = "Fail"
             mismatch_count_dic = {}
             mismatch_count_dic["test_status"] = test_status
-            mismatch_count_dic["source_table"] = source_table
+            mismatch_count_dic["source_table_name"] = source_table
             mismatch_count_dic["source_table_count"] = source_count
-            mismatch_count_dic["target_table"] = target_table
+            mismatch_count_dic["target_table_name"] = target_table
             mismatch_count_dic["target_table_count"] = target_count
             table_count_results.append(mismatch_count_dic)
         return table_count_results
